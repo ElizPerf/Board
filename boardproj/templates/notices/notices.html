@@ -1,0 +1,47 @@
+{% extends 'flatpages/default.html' %}
+{% load custom_filters %}
+{% load custom_tags %}
+{% block title %}
+Notices
+{% endblock title %}
+
+{% block content %}
+   <h1>ALL NOTICES ({{ notices|length }})</h1>
+
+    <h2>{{ time_now|date:'M d Y' }}</h2>
+
+   <form action="" method="get">
+       {{ filterset.form.as_p }}
+       <input type="submit" value="Search" />
+   </form>
+
+
+
+   <hr>
+   {% if notices %}
+       <table style="border: 2px solid white">
+           <tr>
+               <td style="border: 1px solid maroon"><strong>DATE CREATION/AUTHOR</strong></td>
+               <td style="border: 1px solid maroon"><strong>TITLE</strong></td>
+               <td style="border: 1px solid maroon"><strong>CATEGORY</strong></td>
+               <td style="border: 1px solid maroon"><strong>MESSAGE</strong></td>
+
+
+           </tr>
+
+           {% for notice in notices %}
+           <tr>
+               <td style="border: 1px solid maroon; text-align: left; padding: 10px">{{ notice.dateCreation|date:'d.m.Y' }}<br>Author: {{ notice.author }}</td>
+               <td style="border: 1px solid maroon; text-align: left; padding: 10px">{{ notice.title }}</td>
+               <td style="border: 1px solid maroon; text-align: left; padding: 10px">{{ notice.get_category_display }}</td>
+               <td style="border: 1px solid maroon; text-align: left; padding: 10px">{{ notice.text }}</td>
+           </tr>
+           {% endfor %}
+
+       </table>
+   {% else %}
+       <h3>No notices!</h3>
+   {% endif %}
+   {% include 'notices/paginator.html' %}
+
+{% endblock content %}

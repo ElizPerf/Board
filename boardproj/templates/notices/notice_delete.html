@@ -1,0 +1,12 @@
+{% extends 'flatpages/default.html' %}
+{% block content %}
+    <h1>Are you sure you want to delete the notice?</h1>
+    <p>{{ notice.title }}</p>
+
+    <form method="POST" action="{% url 'notice_delete' notice.id %}">
+        {% csrf_token %}
+        <input type="submit" value="Delete">
+    </form>
+{% endblock content %}
+
+

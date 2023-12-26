@@ -1,0 +1,48 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+    Notices
+{% endblock title %}
+
+{% block content %}
+    <h1>All notices</h1>
+<!--    <h3>Всего объявлений - {{ page_obj.paginator.count }}</h3>-->
+    <hr>
+    {% if notices_profile %}
+        <table style="border: 2px solid white">
+            <tr>
+                <td style="border: 1px solid maroon">Date creation/author</td>
+                <td style="border: 1px solid maroon">Title</td>
+                <td style="border: 1px solid maroon">Categories</td>
+                <td style="border: 1px solid maroon">Content</td>
+                {% if perms.boardapp.notice_edit or perms.boardapp.notice_delete %}
+                    <td style="border: 1px solid maroon">Actions</td>
+                {% endif %}
+            </tr>
+            {% for notice in notices_profile %}
+                <tr>
+                    <td style="border: 1px solid maroon; text-align: left; padding: 10px">{{ notice.dateCreation|date:'d.m.Y' }}<br>Author: {{ notice.author }}
+                    </td>
+                    <td style="border: 1px solid maroon; padding: 10px"><a href="{% url 'notice' notice.id %}">{{ notice.title }}</a></td>
+                    <td style="border: 1px solid maroon; text-align: left; padding: 10px">{{ notice.get_category_display }}</td>
+                    <td style="border: 1px solid maroon; text-align: left; padding: 10px">{{ notice.text }}</td>
+                    <td>
+                        {% if notice.author == request.user %}
+                            {% if perms.boardapp.notice_edit %}
+                                <a href="{% url 'notice_edit' notice.id %}">Change | </a>
+                            {% endif %}
+                            {% if perms.boardapp.notice_delete %}
+                                <a href="{% url 'notice_delete' notice.id %}">Delete </a>
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+
+        <h2>No notices found</h2>
+    {% endif %}
+    <!--Добавляем пагинацию-->
+    {% include 'notices/paginator.html' %}
+{% endblock content %}

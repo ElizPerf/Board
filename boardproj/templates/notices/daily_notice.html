@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>New notices</title>
+</head>
+<body>
+<h2>Hello! New notices per week!</h2>
+<ul>
+    {% for notice in notices %}
+        <li><a href="{{ link }}{{ get_absolute_url }}">{{ notice.title }}</a></li>
+    {% endfor %}
+</ul>
+</body>
+</html>

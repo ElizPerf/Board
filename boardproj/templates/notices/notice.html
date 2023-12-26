@@ -1,0 +1,70 @@
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+
+{% block title %}
+    Notice
+{% endblock title %}
+
+{% block content %}
+    <br><br>
+   <h1>Current notice</h1>
+
+    {% if notice.author == request.user %}
+            {% if perms.boardapp.notice_edit %}
+                <a class="btn btn-primary" href="{% url 'notice_edit' notice.id %}">Change </a>
+            {% endif %}
+            {% if perms.boardapp.notice_delete %}
+                <a class="btn btn-primary" href="{% url 'notice_delete' notice.id %}">Delete </a>
+            {% endif %}
+        {% endif %}
+        <h2>{{ notice.title }}</h2>
+        <p>{{ notice.dateCreation|date:'d.m.Y' }} | {{ notice.author }}</p>
+        <p>Category: <b>{{ notice.get_category_display }}</b></p>
+
+        <p align="justify">{{ notice.text }}</p>
+
+
+        {% if notice.author != request.user %}
+            {% if request.user.is_authenticated %}
+                <hr>
+
+                <form method="post" action="{% url 'response_create' notice_id=notice.id %}">
+                    {% csrf_token %}
+                    <label for="content">Response:</label><br>
+                    <textarea cols="35" rows="3" id="content" name="content"></textarea><br>
+                    <button type="submit">Send response</button>
+                </form>
+            {% endif %}
+
+            <hr>
+        {% endif %}
+        <!-- Отображение откликов -->
+        <h3>Responses</h3>
+        {% if notice.author == request.user %}
+        <a class="btn btn-primary" href="{% url 'profile' %}?notice_id={{ notice.id }}">Accept/reject</a>
+            {% endif %}
+        {% for response in responses %}
+            {% if response.author != request.user and response.status != 'rejected' or response.author == request.user %}
+                <div>
+                    <p>Author: {{ response.author }} | Date creation: {{ response.dateCreation|date:'d.m.Y' }}</p>
+                    <p>Text: {{ response.text }}</p>
+                    {% if response.author == request.user%}
+                        {% if response.status == 'accepted' %}
+                            <p style="color: green"><b>Your response was accepted</b></p>
+                        {% elif response.status == 'rejected' %}
+                            {% if response.author == request.user %}
+                                <p style="color: red"><b>Your response was rejected</b></p>
+                            {% endif %}
+                        {% elif response.status == 'pending' %}
+                            <p style="color: orange"><b>Response is still in process</b></p>
+                        {% endif %}
+                    {% endif %}
+                    <hr>
+                </div>
+            {% endif %}
+        {% empty %}
+            <p>No responses</p>
+        {% endfor %}
+
+{% endblock content %}

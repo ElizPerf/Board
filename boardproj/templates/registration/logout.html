@@ -1,0 +1,8 @@
+{% extends 'flatpages/default.html' %}
+{% block content %}
+    <h1>Logout Page</h1>
+    <p>Are you sure you want to log out?</p>
+    <form action="/logout" method="post">
+        <button type="submit">Log out</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends 'flatpages/default.html' %}
+{% block content %}
+    <h1>Registration confirmation</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="confirmation_code">Confirmation code:</label>
+        <input type="text" id="confirmation_code" name="confirmation_code">
+        <button type="submit">Confirm</button>
+    </form>
+{% endblock %}

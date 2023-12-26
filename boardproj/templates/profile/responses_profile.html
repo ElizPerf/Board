@@ -1,0 +1,58 @@
+{% extends 'flatpages/default.html' %}
+{% block content %}
+    <h2>Private page</h2>
+    <a class="btn btn-primary" href="/notices_profile/">All user's notices</a>
+    <br><br>
+    <form method="GET" action="{% url 'profile' %}">
+        <label for="post_id">Choose notice:</label>
+        <select name="post_id" id="post_id">
+            <option value="">All notices</option>
+            {% for notice in notices %}
+                <option value="{{ notice.id }}"
+                        {% if notice.id == request.GET.notice_id %}selected{% endif %}>{{ notice.title }}</option>
+                <p><b>Notice: {{ response.notice.title }}</b></p>
+            {% endfor %}
+
+        </select>
+        <button type="submit">Apply</button>
+    </form>
+    <hr>
+
+    {% for response in responses %}
+        {% if response.status != 'rejected' %}
+
+        <div>
+            <p><b>Notice: <a href="{% url 'notice' response.notice.id %}">{{ response.notice.title }}</a></b></p>
+            <p>{{ response.dateCreation|date:'d.m.Y' }} | <i>{{ response.author }}</i></p>
+            <p>{{ response.text }}</p>
+        </div>
+        {% if response.status == 'accepted' %}
+            <p style="color: green"><b>Response accepted</b></p>
+        {% elif response.status == 'rejected' %}
+            <p style="color: red"><b>Response rejected</b></p>
+        {% elif response.status == 'undefined' %}
+            <p style="color: orange"><b>Response is in process</b></p>
+        {% endif %}
+        <hr>
+        {% endif %}
+        {% if response.status == 'undefined' %}
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <form method="post" action="{% url 'response_status' response.id 'accept' %}">
+                    {% csrf_token %}
+                    <button type="submit">Accept response</button>
+                </form>
+
+                <form method="post" action="{% url 'response_status' response.id 'reject' %}">
+                    {% csrf_token %}
+                    <button type="submit">Reject response</button>
+                </form>
+            </div>
+            <hr>
+        {% endif %}
+
+
+
+    {% empty %}
+        <p>No responses on author's notices {{ user.username }}.</p>
+    {% endfor %}
+{% endblock %}
